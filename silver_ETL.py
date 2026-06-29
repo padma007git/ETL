@@ -254,6 +254,7 @@ with DAG(
 		S.status,
 		S.start_time,
 		S.end_time
+	)
 	""",
             "useLegacySql": False,
         }
