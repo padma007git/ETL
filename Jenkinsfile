@@ -30,9 +30,9 @@ pipeline {
         stage('Deploy DAG') {
             steps {
                 sh '''
-		echo "Copying Bronze DAG..."
+		echo "Copying Bronze DAG to composer..."
         	gcloud storage cp source_erp_1.py gs://${COMPOSER_BUCKET}/dags/
-                echo "Copying DAG to Composer..."
+                echo "Copying sliver dag to Composer..."
                 gcloud storage cp silver_ETL.py gs://${COMPOSER_BUCKET}/dags/
                 '''
             }
@@ -67,7 +67,7 @@ pipeline {
         	sh '''
         	gcloud composer environments run ${COMPOSER_ENV} \
         	--location ${REGION} \
-        	dags trigger -- silver_etl_pipeline_001
+        	dags trigger -- silver_etl_pipeline_002
         	'''
     	    }
 	}
