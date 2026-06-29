@@ -170,8 +170,8 @@ with DAG(
                 INITCAP(TRIM(CAT)) AS category,
                 INITCAP(TRIM(SUBCAT)) AS sub_category,
                 CASE
-                    WHEN UPPER(TRIM(MAINTENANCE)) IN ('YES','Y','TRUE') THEN 'YES'
-                    WHEN UPPER(TRIM(MAINTENANCE)) IN ('NO','N','FALSE') THEN 'NO'
+                    WHEN MAINTENANCE = TRUE THEN 'YES'
+                    WHEN MAINTENANCE = FALSE THEN 'NO'
                     ELSE 'UNKNOWN'
                 END AS maintenance,
                 CURRENT_TIMESTAMP() AS load_timestamp FROM
