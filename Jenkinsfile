@@ -30,22 +30,20 @@ pipeline {
         stage('Deploy DAG') {
             steps {
                 sh '''
-		echo "Copying Bronze DAG to composer..."
-        	gcloud storage cp source_erp_1.py gs://${COMPOSER_BUCKET}/dags/
-                echo "Copying sliver dag to Composer..."
+                echo "Copying DAG to Composer..."
                 gcloud storage cp silver_ETL.py gs://${COMPOSER_BUCKET}/dags/
                 '''
             }
         }
 
-	stage('Wait for Airflow Sync') {
-    	    steps {
-        	echo "Waiting 2 minutes for Composer to detect DAGs..."
-        	sleep(time: 4, unit: 'MINUTES')
-    	    }
-	}
+        stage('Wait for airflow') {
+            steps {
+		echo "Waiting 5 minutes for Airflow to detect the DAG..."	
+                sleep(time:5, unit:'MINUTES')
+            }
+        }
 
-        stage('Trigger bronze DAG') {
+        stage('Trigger Airflow DAG') {
             steps {
                 sh '''
                 gcloud composer environments run ${COMPOSER_ENV} \
@@ -54,22 +52,62 @@ pipeline {
                 '''
             }
         }
-
-	stage('Wait for Bronze Completion') {
-    	    steps {
-        	echo "Waiting for Bronze DAG to complete..."
-        	sleep(time: 3, unit: 'MINUTES')
-    	    }
-	}
-
-	stage('Trigger Silver DAG') {
-    	   steps {
+	
+	 stage('Wait for Bronze DAG Success') {
+    	     steps {
         	sh '''
-        	gcloud composer environments run ${COMPOSER_ENV} \
+        	while true
+        	do
+          	STATUS=$(gcloud composer environments run ${COMPOSER_ENV} \
+			--location ${REGION} \
+			dags list-runs -- --dag-id customer_etl_pipeline_007 \
+			| grep -E "success|failed|running|queued" | head -1)
+		echo "Current Status: $STATUS"
+          	if [[ "$STATUS" == "success" ]]; then
+            	echo "Bronze DAG completed successfully."
+            	break
+          	elif [[ "$STATUS" == "failed" ]]; then
+            	echo "Bronze DAG failed."
+            exit 1
+          fi
+
+          sleep 20
+        done
+        '''
+	    }
+	}
+	stage('Trigger Silver DAG') {
+    	    steps {
+       	    	sh '''
+            	gcloud composer environments run ${COMPOSER_ENV} \
         	--location ${REGION} \
         	dags trigger -- silver_etl_pipeline_002
         	'''
-    	    }
+   		 }
+	}
+	
+	stage('Wait for Silver DAG Success') {
+    	    steps {
+        	sh '''
+        	while true
+        	do
+          	STATUS=$(gcloud composer environments run ${COMPOSER_ENV} \
+			--location ${REGION} \
+			dags list-runs -- --dag-id silver_etl_pipeline_002 \
+			| grep -E "success|failed|running|queued" | head -1)
+		echo "Current Status: $STATUS"
+          	if [[ "$STATUS" == "success" ]]; then
+            	echo "Silver DAG completed successfully."
+            	break
+          	elif [[ "$STATUS" == "failed" ]]; then
+            	echo "Silver DAG failed."
+            exit 1
+          fi
+
+          sleep 20
+        done
+        '''
+    }
 	}
 
     }
