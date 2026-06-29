@@ -38,6 +38,13 @@ pipeline {
             }
         }
 
+	stage('Wait for Airflow Sync') {
+    	    steps {
+        	echo "Waiting 2 minutes for Composer to detect DAGs..."
+        	sleep(time: 4, unit: 'MINUTES')
+    	    }
+	}
+
         stage('Trigger bronze DAG') {
             steps {
                 sh '''
