@@ -36,9 +36,10 @@ pipeline {
             }
         }
 
-        stage('Wait') {
+        stage('Wait for airflow') {
             steps {
-                sleep(time:30, unit:'SECONDS')
+		echo "Waiting 10 minutes for Airflow to detect the DAG..."	
+                sleep(time:10, unit:'MINUTES')
             }
         }
 
