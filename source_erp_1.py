@@ -13,7 +13,7 @@ default_args = {
 }
 
 with DAG(
-    dag_id="customer_etl_pipeline_final02",
+    dag_id="customer_etl_pipeline_final_22",
     start_date=datetime(2026, 1, 1),
     schedule=None,
     catchup=False,

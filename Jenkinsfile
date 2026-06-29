@@ -5,7 +5,7 @@ pipeline {
     environment {
         PROJECT_ID = "etl-demo-project-500808"
         REGION = "us-central1"
-        COMPOSER_ENV = "composer-02"
+        COMPOSER_ENV = "etl-composer-02"
         COMPOSER_BUCKET = "us-central1-etl-composer-02-622ba58e-bucket"
     }
 
