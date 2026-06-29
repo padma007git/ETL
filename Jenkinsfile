@@ -30,20 +30,15 @@ pipeline {
         stage('Deploy DAG') {
             steps {
                 sh '''
+		echo "Copying Bronze DAG..."
+        	gcloud storage cp source_erp_1.py gs://${COMPOSER_BUCKET}/dags/
                 echo "Copying DAG to Composer..."
                 gcloud storage cp silver_ETL.py gs://${COMPOSER_BUCKET}/dags/
                 '''
             }
         }
 
-        stage('Wait for airflow') {
-            steps {
-		echo "Waiting 5 minutes for Airflow to detect the DAG..."	
-                sleep(time:5, unit:'MINUTES')
-            }
-        }
-
-        stage('Trigger Airflow DAG') {
+        stage('Trigger bronze DAG') {
             steps {
                 sh '''
                 gcloud composer environments run ${COMPOSER_ENV} \
@@ -52,6 +47,23 @@ pipeline {
                 '''
             }
         }
+
+	stage('Wait for Bronze Completion') {
+    	    steps {
+        	echo "Waiting for Bronze DAG to complete..."
+        	sleep(time: 3, unit: 'MINUTES')
+    	    }
+	}
+
+	stage('Trigger Silver DAG') {
+    	   steps {
+        	sh '''
+        	gcloud composer environments run ${COMPOSER_ENV} \
+        	--location ${REGION} \
+        	dags trigger -- silver_etl_pipeline_001
+        	'''
+    	    }
+	}
 
     }
 
