@@ -53,43 +53,56 @@ with DAG(
     configuration={
         "query": {
             "query": f"""
-            INSERT INTO `{PROJECT_ID}.audit.pipeline_audit`
-            (
-                pipeline_name,
-                layer,
-                source_file,
-                target_table,
-                records_loaded,
-                status,
-                start_time,
-                end_time,
-                error_message
-            )
+	MERGE `{PROJECT_ID}.audit.pipeline_audit` T
+	USING (
 
-            SELECT
-                'silver_etl_pipeline_001',
-                'SILVER',
-                'CUST_AZ12.csv',
-                'customer',
-                COUNT(*),
-                'SUCCESS',
-                CURRENT_TIMESTAMP(),
-                CURRENT_TIMESTAMP(),
-                NULL
-            FROM `{PROJECT_ID}.silver.customer`
-            WHERE NOT EXISTS (
-            SELECT 1
-                FROM `etl-demo-project-500808.audit.pipeline_audit`
-                WHERE source_file='CUST_AZ12.csv'
-                AND layer='SILVER'
-                AND target_table='customer'
-            );
-            """,
+	SELECT
+		'silver_etl_pipeline_002' AS pipeline_name,
+		'SILVER' AS layer,
+		'CUST_AZ12.csv' AS source_file,
+		'customer' AS target_table,
+		COUNT(*) AS records_loaded,
+		'SUCCESS' AS status,
+		CURRENT_TIMESTAMP() AS start_time,
+		CURRENT_TIMESTAMP() AS end_time,
+		NULL AS error_message
+	FROM `{PROJECT_ID}.silver.customer`
+	) S
+	ON
+		T.source_file = S.source_file
+		AND T.layer = S.layer
+		AND T.target_table = S.target_table
+	WHEN NOT MATCHED THEN	
+	INSERT (
+		pipeline_name,
+		layer,
+		source_file,
+		target_table,
+		records_loaded,
+		status,
+		start_time,
+		end_time,
+		error_message
+	)
+
+	VALUES (
+		S.pipeline_name,
+		S.layer,
+		S.source_file,
+		S.target_table,
+		S.records_loaded,
+		S.status,
+		S.start_time,
+		S.end_time,
+		S.error_message
+	);
+
+	""",
             "useLegacySql": False,
         }
     },
     location="US",
-    )
+	)
     
     create_location_silver = BigQueryInsertJobOperator(
         task_id="create_location_silver",
@@ -121,43 +134,54 @@ with DAG(
     configuration={
         "query": {
             "query": f"""
-            INSERT INTO `{PROJECT_ID}.audit.pipeline_audit`
-            (
-                pipeline_name,
-                layer,
-                source_file,
-                target_table,
-                records_loaded,
-                status,
-                start_time,
-                end_time,
-                error_message
-            )
 
-            SELECT
-                'silver_etl_pipeline_001',
-                'SILVER',
-                'LOC_A101.csv',
-                'location',
-                COUNT(*),
-                'SUCCESS',
-                CURRENT_TIMESTAMP(),
-                CURRENT_TIMESTAMP(),
-                NULL
-            FROM `{PROJECT_ID}.silver.location`
-            WHERE NOT EXISTS (
-            SELECT 1
-                FROM `etl-demo-project-500808.audit.pipeline_audit`
-                WHERE source_file='LOC_A101.csv'
-                AND layer='SILVER'
-                AND target_table='location'
-            );
-            """,
+	MERGE `{PROJECT_ID}.audit.pipeline_audit` T
+		USING (
+	SELECT
+		'silver_etl_pipeline_002' AS pipeline_name,
+		'SILVER' AS layer,
+		'LOC_A101.csv' AS source_file,
+		'location' AS target_table,
+		COUNT(*) AS records_loaded,
+		'SUCCESS' AS status,
+		CURRENT_TIMESTAMP() AS start_time,
+		CURRENT_TIMESTAMP() AS end_time,
+		NULL AS error_message
+	FROM `{PROJECT_ID}.silver.location`
+	) S
+	ON
+		T.source_file = S.source_file
+		AND T.layer = S.layer
+		AND T.target_table = S.target_table
+	WHEN NOT MATCHED THEN
+	INSERT (
+		pipeline_name,
+		layer,
+		source_file,
+		target_table,
+		records_loaded,
+		status,
+		start_time,
+		end_time,
+		error_message
+	)
+	VALUES (
+		S.pipeline_name,
+		S.layer,
+		S.source_file,
+		S.target_table,
+		S.records_loaded,
+		S.status,
+		S.start_time,
+		S.end_time,
+		S.error_message
+	);
+	""",
             "useLegacySql": False,
         }
     },
     location="US",
-    )
+	)
     
     create_product_silver = BigQueryInsertJobOperator(
         task_id="create_product_silver",
@@ -198,43 +222,54 @@ with DAG(
     configuration={
         "query": {
             "query": f"""
-            INSERT INTO `{PROJECT_ID}.audit.pipeline_audit`
-            (
-                pipeline_name,
-                layer,
-                source_file,
-                target_table,
-                records_loaded,
-                status,
-                start_time,
-                end_time,
-                error_message
-            )
+	MERGE `{PROJECT_ID}.audit.pipeline_audit` T
+	USING (
+	SELECT
+		'silver_etl_pipeline_002' AS pipeline_name,
+		'SILVER' AS layer,
+		'PX_CAT_G1V2.csv' AS source_file,
+		'product' AS target_table,
+		COUNT(*) AS records_loaded,
+		'SUCCESS' AS status,
+		CURRENT_TIMESTAMP() AS start_time,
+		CURRENT_TIMESTAMP() AS end_time,
+		NULL AS error_message
+	FROM `{PROJECT_ID}.silver.product`
+	) S
+	ON
+		T.source_file = S.source_file
+		AND T.layer = S.layer
+		AND T.target_table = S.target_table
+	WHEN NOT MATCHED THEN
+	INSERT (
+		pipeline_name,
+		layer,
+		source_file,
+		target_table,
+		records_loaded,
+		status,
+		start_time,
+		end_time,
+		error_message
+	)
 
-            SELECT
-                'silver_etl_pipeline_001',
-                'SILVER',
-                'PX_CAT_G1V2.csv',
-                'product',
-                COUNT(*),
-                'SUCCESS',
-                CURRENT_TIMESTAMP(),
-                CURRENT_TIMESTAMP(),
-                NULL
-            FROM `{PROJECT_ID}.silver.product`
-            WHERE NOT EXISTS (
-            SELECT 1
-                FROM `etl-demo-project-500808.audit.pipeline_audit`
-                WHERE source_file='PX_CAT_G1V2.csv'
-                AND layer='SILVER'
-                AND target_table='product'
-            );
-            """,
+	VALUES (
+		S.pipeline_name,
+		S.layer,
+		S.source_file,
+		S.target_table,
+		S.records_loaded,
+		S.status,
+		S.start_time,
+		S.end_time,
+		S.error_message
+	);
+	""",
             "useLegacySql": False,
         }
     },
     location="US",
-    )
+	)
     
     end = EmptyOperator(
         task_id="end"

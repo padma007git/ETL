@@ -38,47 +38,57 @@ with DAG(
     )
     
     audit_customer = BigQueryInsertJobOperator(
-    task_id="audit_customer",
-    configuration={
-        "query": {
-            "query": f"""
-            INSERT INTO `{PROJECT_ID}.audit.pipeline_audit`
-            (
-                pipeline_name,
-                layer,
-                source_file,
-                target_table,
-                records_loaded,
-                status,
-                start_time,
-                end_time,
-                error_message
-            )
-
-            SELECT
-                'customer_etl_pipeline',
-                'BRONZE',
-                'CUST_AZ12.csv',
-                'customer_raw',
-                COUNT(*),
-                'SUCCESS',
-                CURRENT_TIMESTAMP(),
-                CURRENT_TIMESTAMP(),
-                NULL
-            FROM `{PROJECT_ID}.bronze.customer_raw`
-		WHERE NOT EXISTS (
-	    SELECT 1
-		FROM `etl-demo-project-500808.audit.pipeline_audit`
-		WHERE source_file='CUST_AZ12.csv'
-		AND layer='BRONZE'
-		AND target_table='customer_raw'
-		);
-            """,
+    	task_id="audit_customer",
+    	configuration={
+        	"query": {
+            		"query": f"""
+	MERGE `{PROJECT_ID}.audit.pipeline_audit` T
+	USING (
+    SELECT
+    	'customer_etl_pipeline' AS pipeline_name,
+    	'BRONZE' AS layer,
+    	'CUST_AZ12.csv' AS source_file,
+    	'customer_raw' AS target_table,
+    	COUNT(*) AS records_loaded,
+    	'SUCCESS' AS status,
+    	CURRENT_TIMESTAMP() AS start_time,
+    	CURRENT_TIMESTAMP() AS end_time,
+    	NULL AS error_message
+    FROM `{PROJECT_ID}.bronze.customer_raw`
+	) S
+    ON
+	T.source_file = S.source_file
+	AND T.layer = S.layer
+	AND T.target_table = S.target_table
+	WHEN NOT MATCHED THEN
+    INSERT (
+    	pipeline_name,
+    	layer,
+    	source_file,
+     	target_table,
+    	records_loaded,
+    	status,
+    	start_time,
+   	end_time,
+    	error_message
+	)
+    VALUES (
+    	S.pipeline_name,
+    	S.layer,
+    	S.source_file,
+    	S.target_table,
+    	S.records_loaded,
+    	S.status,
+    	S.start_time,
+    	S.end_time,
+    	S.error_message
+	);
+	""",
             "useLegacySql": False,
         }
     },
-    location="US",
-    )
+	location="US",
+	)
 
     load_location = GCSToBigQueryOperator(
         task_id="load_location",
@@ -92,47 +102,64 @@ with DAG(
     )
     
     audit_location = BigQueryInsertJobOperator(
-    task_id="audit_location",
-    configuration={
-        "query": {
-            "query": f"""
-            INSERT INTO `{PROJECT_ID}.audit.pipeline_audit`
-            (
-                pipeline_name,
-                layer,
-                source_file,
-                target_table,
-                records_loaded,
-                status,
-                start_time,
-                end_time,
-                error_message
-            )
+    	task_id="audit_location",
+    	configuration={
+           "query": {
+            	"query": f"""
+	MERGE `{PROJECT_ID}.audit.pipeline_audit` T
 
-            SELECT
-                'customer_etl_pipeline',
-                'BRONZE',
-                'LOC_A101.csv',
-                'location_raw',
-                COUNT(*),
-                'SUCCESS',
-                CURRENT_TIMESTAMP(),
-                CURRENT_TIMESTAMP(),
-                NULL
-            FROM `{PROJECT_ID}.bronze.location_raw`
-		WHERE NOT EXISTS (
-	    SELECT 1
-		FROM `etl-demo-project-500808.audit.pipeline_audit`
-		WHERE source_file='LOC_A101.csv'
-		AND layer='BRONZE'
-		AND target_table='location_raw'
-		);
-            """,
-            "useLegacySql": False,
-        }
-    },
-    location="US",
-    )
+	USING (
+
+	SELECT
+   	 'customer_etl_pipeline' AS pipeline_name,
+    	'BRONZE' AS layer,
+    	'LOC_A101.csv' AS source_file,
+    	'location_raw' AS target_table,
+    	COUNT(*) AS records_loaded,
+    	'SUCCESS' AS status,
+    	CURRENT_TIMESTAMP() AS start_time,
+    	CURRENT_TIMESTAMP() AS end_time,
+    	NULL AS error_message
+
+	FROM `{PROJECT_ID}.bronze.location_raw`
+
+	) S
+
+	ON
+	T.source_file = S.source_file
+	AND T.layer = S.layer
+	AND T.target_table = S.target_table
+	WHEN NOT MATCHED THEN
+	INSERT (
+    	pipeline_name,
+    	layer,
+    	source_file,
+    	target_table,
+    	records_loaded,
+   	status,
+    	start_time,
+    	end_time,
+    	error_message
+	)
+
+     VALUES (
+    	S.pipeline_name,
+    	S.layer,
+    	S.source_file,
+    	S.target_table,
+    	S.records_loaded,
+    	S.status,
+    	S.start_time,
+    	S.end_time,
+    	S.error_message
+     );
+
+	""",
+          	 "useLegacySql": False,
+       	 }
+    	},
+	location="US",
+      )
 
     load_product = GCSToBigQueryOperator(
         task_id="load_product",
@@ -146,47 +173,57 @@ with DAG(
         write_disposition="WRITE_TRUNCATE",
     )
     
-    audit_product = BigQueryInsertJobOperator(
-    task_id="audit_product",
-    configuration={
+   audit_product = BigQueryInsertJobOperator(
+    	task_id="audit_product",
+    	configuration={
         "query": {
             "query": f"""
-            INSERT INTO `{PROJECT_ID}.audit.pipeline_audit`
-            (
-                pipeline_name,
-                layer,
-                source_file,
-                target_table,
-                records_loaded,
-                status,
-                start_time,
-                end_time,
-                error_message
-            )
-
-            SELECT
-                'customer_etl_pipeline',
-                'BRONZE',
-                'PX_CAT_G1V2.csv',
-                'product_raw',
-                COUNT(*),
-                'SUCCESS',
-                CURRENT_TIMESTAMP(),
-                CURRENT_TIMESTAMP(),
-                NULL
-            FROM `{PROJECT_ID}.bronze.product_raw`
-		WHERE NOT EXISTS (
-	    SELECT 1
-		FROM `etl-demo-project-500808.audit.pipeline_audit`
-		WHERE source_file='PX_CAT_G1V2.csv'
-		AND layer='BRONZE'
-		AND target_table='product_raw'
-		);
-            """,
-            "useLegacySql": False,
+	MERGE `{PROJECT_ID}.audit.pipeline_audit` T
+	USING (
+     SELECT
+    	'customer_etl_pipeline' AS pipeline_name,
+    	'BRONZE' AS layer,
+   	'PX_CAT_G1V2.csv' AS source_file,
+    	'product_raw' AS target_table,
+    	COUNT(*) AS records_loaded,
+    	'SUCCESS' AS status,
+    	CURRENT_TIMESTAMP() AS start_time,
+    	CURRENT_TIMESTAMP() AS end_time,
+    	NULL AS error_message
+     FROM `{PROJECT_ID}.bronze.product_raw`
+	) S
+     ON
+	T.source_file = S.source_file
+	AND T.layer = S.layer
+	AND T.target_table = S.target_table
+	WHEN NOT MATCHED THEN
+     INSERT (
+    	pipeline_name,
+    	layer,
+    	source_file,
+    	target_table,
+    	records_loaded,
+    	status,
+    	start_time,
+    	end_time,
+    	error_message
+	)
+    VALUES (
+    	S.pipeline_name,
+    	S.layer,
+    	S.source_file,
+    	S.target_table,
+    	S.records_loaded,
+    	S.status,
+    	S.start_time,
+    	S.end_time,
+    	S.error_message
+      );
+   	 """,
+        "useLegacySql": False,
         }
-    },
-    location="US",
+   	 },
+	location="US",
     )
     
     create_audit_table = BigQueryInsertJobOperator(
