@@ -64,8 +64,7 @@ with DAG(
 		COUNT(*) AS records_loaded,
 		'SUCCESS' AS status,
 		CURRENT_TIMESTAMP() AS start_time,
-		CURRENT_TIMESTAMP() AS end_time,
-		NULL AS error_message
+		CURRENT_TIMESTAMP() AS end_time
 	FROM `{PROJECT_ID}.silver.customer`
 	) S
 	ON
@@ -81,8 +80,7 @@ with DAG(
 		records_loaded,
 		status,
 		start_time,
-		end_time,
-		error_message
+		end_time
 	)
 
 	VALUES (
@@ -93,8 +91,7 @@ with DAG(
 		S.records_loaded,
 		S.status,
 		S.start_time,
-		S.end_time,
-		S.error_message
+		S.end_time
 	);
 
 	""",
@@ -145,8 +142,7 @@ with DAG(
 		COUNT(*) AS records_loaded,
 		'SUCCESS' AS status,
 		CURRENT_TIMESTAMP() AS start_time,
-		CURRENT_TIMESTAMP() AS end_time,
-		NULL AS error_message
+		CURRENT_TIMESTAMP() AS end_time
 	FROM `{PROJECT_ID}.silver.location`
 	) S
 	ON
@@ -162,8 +158,7 @@ with DAG(
 		records_loaded,
 		status,
 		start_time,
-		end_time,
-		error_message
+		end_time
 	)
 	VALUES (
 		S.pipeline_name,
@@ -173,8 +168,7 @@ with DAG(
 		S.records_loaded,
 		S.status,
 		S.start_time,
-		S.end_time,
-		S.error_message
+		S.end_time
 	);
 	""",
             "useLegacySql": False,
@@ -232,8 +226,7 @@ with DAG(
 		COUNT(*) AS records_loaded,
 		'SUCCESS' AS status,
 		CURRENT_TIMESTAMP() AS start_time,
-		CURRENT_TIMESTAMP() AS end_time,
-		NULL AS error_message
+		CURRENT_TIMESTAMP() AS end_time
 	FROM `{PROJECT_ID}.silver.product`
 	) S
 	ON
@@ -249,8 +242,7 @@ with DAG(
 		records_loaded,
 		status,
 		start_time,
-		end_time,
-		error_message
+		end_time
 	)
 
 	VALUES (
@@ -261,9 +253,7 @@ with DAG(
 		S.records_loaded,
 		S.status,
 		S.start_time,
-		S.end_time,
-		S.error_message
-	);
+		S.end_time
 	""",
             "useLegacySql": False,
         }
