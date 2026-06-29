@@ -13,7 +13,7 @@ default_args = {
 with DAG(
     dag_id="silver_etl_pipeline_001",
     start_date=datetime(2026, 1, 1),
-    schedule=None,
+    schedule=@once,
     catchup=False,
     default_args=default_args,
     tags=["gcp", "silver"],
