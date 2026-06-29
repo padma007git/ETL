@@ -13,7 +13,7 @@ default_args = {
 }
 
 with DAG(
-    dag_id="customer_etl_pipeline_final_22",
+    dag_id="customer_etl_pipeline_007",
     start_date=datetime(2026, 1, 1),
     schedule=None,
     catchup=False,
@@ -86,7 +86,7 @@ with DAG(
     )
     
     audit_location = BigQueryInsertJobOperator(
-    task_id="audit_location",
+    task_id="audit_customer",
     configuration={
         "query": {
             "query": f"""
@@ -134,7 +134,7 @@ with DAG(
     )
     
     audit_product = BigQueryInsertJobOperator(
-    task_id="audit_product",
+    task_id="audit_customer",
     configuration={
         "query": {
             "query": f"""
