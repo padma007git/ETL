@@ -243,7 +243,7 @@ with DAG(
                 end_time TIMESTAMP,
                 error_message STRING
             )
-            """,1
+            """,
             "useLegacySql": False
         }
     },
