@@ -11,7 +11,7 @@ default_args = {
 }
 
 with DAG(
-    dag_id="silver_etl_pipeline_001",
+    dag_id="silver_etl_pipeline_002",
     start_date=datetime(2026, 1, 1),
     schedule="@once",
     catchup=False,
