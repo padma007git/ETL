@@ -15,7 +15,7 @@ default_args = {
 with DAG(
     dag_id="customer_etl_pipeline_007",
     start_date=datetime(2026, 1, 1),
-    schedule="@once",
+    schedule=None,
     catchup=False,
     default_args=default_args,
     tags=["gcp", "etl"],
@@ -34,6 +34,7 @@ with DAG(
         source_format="CSV",
         skip_leading_rows=1,
         autodetect=True,
+	create_disposition="CREATE_IF_NEEDED",
         write_disposition="WRITE_TRUNCATE",
     )
     
@@ -95,6 +96,7 @@ with DAG(
         destination_project_dataset_table=f"{PROJECT_ID}.bronze.location_raw",
         source_format="CSV",
         skip_leading_rows=1,
+	create_disposition="CREATE_IF_NEEDED",
         write_disposition="WRITE_TRUNCATE",
     )
     
@@ -167,6 +169,7 @@ with DAG(
         source_format="CSV",
         skip_leading_rows=1,
         autodetect=True,
+	create_disposition="CREATE_IF_NEEDED",
         write_disposition="WRITE_TRUNCATE",
     )
     
