@@ -60,20 +60,21 @@ pipeline {
         	sh '''
         	while true
         	do
-          	STATUS=$(gcloud composer environments run ${COMPOSER_ENV} \
-			--location ${REGION} \
-			dags list-runs -- --dag-id customer_etl_pipeline_007 \
-			| grep -E "success|failed|running|queued" | head -1)
-		echo "Current Status: $STATUS"
-          	if [[ "$STATUS" == "success" ]]; then
-            	echo "Bronze DAG completed successfully."
-            	break
-          	elif [[ "$STATUS" == "failed" ]]; then
-            	echo "Bronze DAG failed."
-            exit 1
-          fi
+          	STATUS=$(gcloud composer environments run etl-composer-02 \
+		--location us-central1 dags list-runs -- \
+		--dag-id customer_etl_pipeline_007 | grep -E "success|failed|running|queued" | head -1)
 
-          sleep 20
+		echo "$STATUS"
+
+	if echo "$STATUS" | grep -q "success"; then
+   	 	echo "SUCCESS"
+   	 break
+		elif echo "$STATUS" | grep -q "failed"; then
+    	echo "FAILED"
+   	 exit 1
+	fi
+
+	sleep 20
         done
         '''
 	    }
