@@ -66,6 +66,13 @@ with DAG(
                 CURRENT_TIMESTAMP(),
                 NULL
             FROM `{PROJECT_ID}.bronze.customer_raw`
+		WHERE NOT EXISTS (
+	    SELECT 1
+		FROM `etl-demo-project-500808.audit.pipeline_audit`
+		WHERE source_file='CUST_AZ12.csv'
+		AND layer='BRONZE'
+		AND target_table='customer_raw'
+		);
             """,
             "useLegacySql": False,
         }
@@ -113,6 +120,13 @@ with DAG(
                 CURRENT_TIMESTAMP(),
                 NULL
             FROM `{PROJECT_ID}.bronze.location_raw`
+		WHERE NOT EXISTS (
+	    SELECT 1
+		FROM `etl-demo-project-500808.audit.pipeline_audit`
+		WHERE source_file='LOC_A101.csv'
+		AND layer='BRONZE'
+		AND target_table='location_raw'
+		);
             """,
             "useLegacySql": False,
         }
@@ -161,6 +175,13 @@ with DAG(
                 CURRENT_TIMESTAMP(),
                 NULL
             FROM `{PROJECT_ID}.bronze.product_raw`
+		WHERE NOT EXISTS (
+	    SELECT 1
+		FROM `etl-demo-project-500808.audit.pipeline_audit`
+		WHERE source_file='PX_CAT_G1V2.csv'
+		AND layer='BRONZE'
+		AND target_table='product_raw'
+		);
             """,
             "useLegacySql": False,
         }
