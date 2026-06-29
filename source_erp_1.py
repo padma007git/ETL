@@ -173,7 +173,7 @@ with DAG(
         write_disposition="WRITE_TRUNCATE",
     )
     
-   audit_product = BigQueryInsertJobOperator(
+    audit_product = BigQueryInsertJobOperator(
     	task_id="audit_product",
     	configuration={
         "query": {
@@ -243,7 +243,7 @@ with DAG(
                 end_time TIMESTAMP,
                 error_message STRING
             )
-            """,
+            """,1
             "useLegacySql": False
         }
     },
