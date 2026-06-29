@@ -13,7 +13,7 @@ default_args = {
 with DAG(
     dag_id="silver_etl_pipeline_001",
     start_date=datetime(2026, 1, 1),
-    schedule="@once",
+    schedule=@once,
     catchup=False,
     default_args=default_args,
     tags=["gcp", "silver"],
@@ -31,7 +31,7 @@ with DAG(
                 CREATE OR REPLACE TABLE `{PROJECT_ID}.silver.customer` AS
                 SELECT
                     TRIM(CID) AS customer_id,
-                    PARSE_DATE('%d-%m-%Y', BDATE) AS birth_date,
+                    BDATE AS birth_date,
                     CASE
                         WHEN UPPER(TRIM(GEN))='M' THEN 'Male'
                         WHEN UPPER(TRIM(GEN))='F' THEN 'Female'
