@@ -31,7 +31,7 @@ pipeline {
             steps {
                 sh '''
                 echo "Copying DAG to Composer..."
-                gcloud storage cp source_erp_1.py gs://${COMPOSER_BUCKET}/dags/
+                gcloud storage cp silver_ETL.py gs://${COMPOSER_BUCKET}/dags/
                 '''
             }
         }
