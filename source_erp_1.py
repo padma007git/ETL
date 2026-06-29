@@ -81,7 +81,6 @@ with DAG(
         destination_project_dataset_table=f"{PROJECT_ID}.bronze.location_raw",
         source_format="CSV",
         skip_leading_rows=1,
-        autodetect=True,
         write_disposition="WRITE_TRUNCATE",
     )
     
