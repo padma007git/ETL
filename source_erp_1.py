@@ -53,7 +53,7 @@ with DAG(
     	'SUCCESS' AS status,
     	CURRENT_TIMESTAMP() AS start_time,
     	CURRENT_TIMESTAMP() AS end_time,
-    	NULL AS error_message
+    	CAST(NULL AS STRING) AS error_messagee
     FROM `{PROJECT_ID}.bronze.customer_raw`
 	) S
     ON
@@ -119,7 +119,7 @@ with DAG(
     	'SUCCESS' AS status,
     	CURRENT_TIMESTAMP() AS start_time,
     	CURRENT_TIMESTAMP() AS end_time,
-    	NULL AS error_message
+    	CAST(NULL AS STRING) AS error_message
 
 	FROM `{PROJECT_ID}.bronze.location_raw`
 
@@ -189,7 +189,7 @@ with DAG(
     	'SUCCESS' AS status,
     	CURRENT_TIMESTAMP() AS start_time,
     	CURRENT_TIMESTAMP() AS end_time,
-    	NULL AS error_message
+    	CAST(NULL AS STRING) AS error_message
      FROM `{PROJECT_ID}.bronze.product_raw`
 	) S
      ON
