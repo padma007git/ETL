@@ -86,7 +86,7 @@ with DAG(
     )
     
     audit_location = BigQueryInsertJobOperator(
-    task_id="audit_customer",
+    task_id="audit_location",
     configuration={
         "query": {
             "query": f"""
@@ -134,7 +134,7 @@ with DAG(
     )
     
     audit_product = BigQueryInsertJobOperator(
-    task_id="audit_customer",
+    task_id="audit_product",
     configuration={
         "query": {
             "query": f"""
