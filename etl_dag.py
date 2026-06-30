@@ -262,7 +262,7 @@ with DAG(
         create_customer_silver = BigQueryInsertJobOperator(
 	task_id="create_customer_silver",
 	configuration={
-	"query": {
+	    "query": {
 		"query": f"""
 		CREATE OR REPLACE TABLE `{PROJECT_ID}.silver.customer` AS
 		SELECT
@@ -286,11 +286,11 @@ with DAG(
 		},
 		location="US",
 	)
-	audit_customer_silver = BigQueryInsertJobOperator(
+        audit_customer_silver = BigQueryInsertJobOperator(
 	task_id="audit_customer_silver",
 	configuration={
-		"query": {
-			"query": f"""
+	    "query": {
+		"query": f"""
 		MERGE `{PROJECT_ID}.audit.pipeline_audit` T
 		USING (
 
@@ -339,11 +339,11 @@ with DAG(
 		location="US",
 	)
 		
-	create_location_silver = BigQueryInsertJobOperator(
+        create_location_silver = BigQueryInsertJobOperator(
 	task_id="create_location_silver",
 	configuration={
-		"query": {
-			"query": f"""
+	    "query": {
+		"query": f"""
 		CREATE OR REPLACE TABLE `{PROJECT_ID}.silver.location` AS
 		SELECT
 			TRIM(string_field_0) AS customer_id,
@@ -364,10 +364,10 @@ with DAG(
 	)
 
 
-	audit_location_silver = BigQueryInsertJobOperator(
+        audit_location_silver = BigQueryInsertJobOperator(
 	task_id="audit_location_silver",
 	configuration={
-	"query": {
+	    "query": {
 		"query": f"""
 
 		MERGE `{PROJECT_ID}.audit.pipeline_audit` T
@@ -415,10 +415,10 @@ with DAG(
 		location="US",
 	)
 		
-	create_product_silver = BigQueryInsertJobOperator(
+        create_product_silver = BigQueryInsertJobOperator(
 	task_id="create_product_silver",
 	configuration={
-	"query": {
+	    "query": {
 		"query": f"""
 	CREATE OR REPLACE TABLE `{PROJECT_ID}.silver.product` AS
 	SELECT
@@ -449,10 +449,10 @@ with DAG(
 	)
 
 
-	audit_product_silver = BigQueryInsertJobOperator(
+        audit_product_silver = BigQueryInsertJobOperator(
 	task_id="audit_product_silver",
 	configuration={
-	"query": {
+	    "query": {
 		"query": f"""
 		MERGE `{PROJECT_ID}.audit.pipeline_audit` T
 		USING (
@@ -519,10 +519,10 @@ with DAG(
         },
         )
 	
-	audit_customer_gold = BigQueryInsertJobOperator(
+        audit_customer_gold = BigQueryInsertJobOperator(
 	task_id="audit_customer_gold",
 	configuration={
-	"query": {
+	    "query": {
 		"query": f"""
 		MERGE `{PROJECT_ID}.audit.pipeline_audit` T
 		USING (
@@ -570,10 +570,10 @@ with DAG(
 		location="US",
 		)
 
-	gold_location = BigQueryInsertJobOperator(
+        gold_location = BigQueryInsertJobOperator(
 	task_id="gold_location",
 	configuration={
-	"query": {
+	    "query": {
 		"query": """
 	CREATE OR REPLACE TABLE `etl-demo-project-500808.gold.location` AS
 	SELECT *
@@ -584,10 +584,10 @@ with DAG(
 		},
 	)
 
-	audit_location_gold = BigQueryInsertJobOperator(
+        audit_location_gold = BigQueryInsertJobOperator(
 	task_id="audit_location_gold",
 	configuration={
-	"query": {
+	    "query": {
 		"query": f"""
 	MERGE `{PROJECT_ID}.audit.pipeline_audit` T
 	USING (
@@ -635,10 +635,10 @@ with DAG(
 		location="US",
 	)
 
-	gold_product = BigQueryInsertJobOperator(
+        gold_product = BigQueryInsertJobOperator(
 	task_id="gold_product",
 	configuration={
-	"query": {
+	    "query": {
 		"query": """
 		CREATE OR REPLACE TABLE `etl-demo-project-500808.gold.product` AS
 		SELECT *
@@ -649,10 +649,10 @@ with DAG(
 		},
 	)
 		 
-	audit_product_gold = BigQueryInsertJobOperator(
+        audit_product_gold = BigQueryInsertJobOperator(
 	task_id="audit_product_gold",
 	configuration={
-	query": {
+	    query": {
 		"query": f"""
 		MERGE `{PROJECT_ID}.audit.pipeline_audit` T
 		USING (
