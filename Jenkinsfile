@@ -50,7 +50,7 @@ pipeline {
                 sh '''
                 gcloud composer environments run ${COMPOSER_ENV} \
                 --location ${REGION} \
-                dags trigger -- customer_etl_pipeline_007
+                dags trigger -- customer_etl_pipeline_123
                 '''
             }
         }
