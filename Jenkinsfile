@@ -60,19 +60,19 @@ pipeline {
                 sh '''
                 gcloud composer environments run ${COMPOSER_ENV} \
                 --location ${REGION} \
-                dags trigger -- customer_etl_pipeline_123
+                dags trigger -- etl_dag
                 '''
             }
         }
 	
-	 stage('Wait for Bronze DAG Success') {
+	 stage('Wait for ETL DAG Success') {
     	     steps {
         	sh '''
         	while true
         	do
           	STATUS=$(gcloud composer environments run etl-composer-02 \
 		--location us-central1 dags list-runs -- \
-		--dag-id customer_etl_pipeline_123 | grep -E "success|failed|running|queued" | head -1)
+		--dag-id etl_dag | grep -E "success|failed|running|queued" | head -1)
 
 		echo "$STATUS"
 
@@ -89,42 +89,8 @@ pipeline {
         '''
 	    }
 	}
-	stage('Trigger Silver DAG') {
-    	    steps {
-       	    	sh '''
-            	gcloud composer environments run ${COMPOSER_ENV} \
-        	--location ${REGION} \
-        	dags trigger -- silver_etl_pipeline_007
-        	'''
-   		 }
-	}
 	
-	stage('Wait for Silver DAG Success') {
-    	    steps {
-        	sh '''
-        	while true
-		do
-    		STATUS=$(gcloud composer environments run etl-composer-02 \
-        	--location us-central1 dags list-runs -- \
-        	--dag-id silver_etl_pipeline_007 | grep -E "success|failed|running|queued" | head -1)
-
-    		echo "$STATUS"
-
-    	if echo "$STATUS" | grep -q "success"; then
-       	 	echo "SUCCESS"
-        	break
-    	elif echo "$STATUS" | grep -q "failed"; then
-        	echo "FAILED"
-        exit 1
-    fi
-
-    sleep 20
-	done
-        '''
-
-	}
-
-    }
+	
     }
 
     post {
