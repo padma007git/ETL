@@ -6,7 +6,7 @@ pipeline {
         PROJECT_ID = "etl-demo-project-500808"
         REGION = "us-central1"
         COMPOSER_ENV = "etl-composer-02"
-        COMPOSER_BUCKET = "us-central1-etl-composer-02-622ba58e-bucket"
+        COMPOSER_BUCKET = "us-central1-etl-composer-02-d2250ef0-bucket"
     }
 
     stages {
@@ -27,16 +27,6 @@ pipeline {
             }
         }
 
-	stage('Check DAGs') {
-    	    steps {
-        	sh '''
-        	gcloud composer environments run ${COMPOSER_ENV} \
-        	--location ${REGION} \
-        	dags list
-        	'''
-    }
-	}
-
         stage('Deploy DAG') {
             steps {
                 sh '''
@@ -47,6 +37,16 @@ pipeline {
                 '''
             }
         }
+
+	stage('Check DAGs') {
+    	    steps {
+        	sh '''
+        	gcloud composer environments run ${COMPOSER_ENV} \
+        	--location ${REGION} \
+        	dags list
+        	'''
+    }
+	}
 
         stage('Wait for airflow') {
             steps {
