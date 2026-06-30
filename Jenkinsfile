@@ -27,6 +27,16 @@ pipeline {
             }
         }
 
+	stage('Check DAGs') {
+    	    steps {
+        	sh '''
+        	gcloud composer environments run ${COMPOSER_ENV} \
+        	--location ${REGION} \
+        	dags list
+        	'''
+    }
+	}
+
         stage('Deploy DAG') {
             steps {
                 sh '''
@@ -94,9 +104,9 @@ pipeline {
         	sh '''
         	while true
 		do
-    		STATUS=$(gcloud composer environments run etl-composer-007 \
+    		STATUS=$(gcloud composer environments run etl-composer-02 \
         	--location us-central1 dags list-runs -- \
-        	--dag-id silver_etl_pipeline_002 | grep -E "success|failed|running|queued" | head -1)
+        	--dag-id silver_etl_pipeline_007 | grep -E "success|failed|running|queued" | head -1)
 
     		echo "$STATUS"
 
