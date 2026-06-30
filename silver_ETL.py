@@ -266,12 +266,218 @@ with DAG(
         task_id="end"
     )
 
+    gold_customer = BigQueryInsertJobOperator(
+    task_id="gold_customer",
+    configuration={
+        "query": {
+            "query": """
+            CREATE OR REPLACE TABLE `etl-demo-project-500808.gold.customer` AS
+            SELECT *
+            FROM `etl-demo-project-500808.silver.customer`;
+            """,
+            "useLegacySql": False,
+        }
+    },
+    )
+
+
+    audit_customer_gold = BigQueryInsertJobOperator(
+    task_id="audit_customer_gold",
+    configuration={
+        "query": {
+            "query": f"""
+	MERGE `{PROJECT_ID}.audit.pipeline_audit` T
+	USING (
+	SELECT
+		'silver_etl_pipeline_002' AS pipeline_name,
+		'SILVER' AS layer,
+		'CUST_AZ12.csv' AS source_file,
+		'product' AS target_table,
+		COUNT(*) AS records_loaded,
+		'SUCCESS' AS status,
+		CURRENT_TIMESTAMP() AS start_time,
+		CURRENT_TIMESTAMP() AS end_time
+	FROM `{PROJECT_ID}.silver.product`
+	) S
+	ON
+		T.source_file = S.source_file
+		AND T.layer = S.layer
+		AND T.target_table = S.target_table
+	WHEN NOT MATCHED THEN
+	INSERT (
+		pipeline_name,
+		layer,
+		source_file,
+		target_table,
+		records_loaded,
+		status,
+		start_time,
+		end_time
+	)
+
+	VALUES (
+		S.pipeline_name,
+		S.layer,
+		S.source_file,
+		S.target_table,
+		S.records_loaded,
+		S.status,
+		S.start_time,
+		S.end_time
+	)
+	""",
+            "useLegacySql": False,
+        }
+    },
+    location="US",
+	)
+
+    gold_location = BigQueryInsertJobOperator(
+    task_id="gold_location",
+    configuration={
+        "query": {
+            "query": """
+            CREATE OR REPLACE TABLE `etl-demo-project-500808.gold.location` AS
+            SELECT *
+            FROM `etl-demo-project-500808.silver.location`;
+            """,
+            "useLegacySql": False,
+        }
+    },
+    )
+
+    audit_location_gold = BigQueryInsertJobOperator(
+    task_id="audit_location_gold",
+    configuration={
+        "query": {
+            "query": f"""
+	MERGE `{PROJECT_ID}.audit.pipeline_audit` T
+	USING (
+	SELECT
+		'silver_etl_pipeline_002' AS pipeline_name,
+		'SILVER' AS layer,
+		'LOC_A101.csv' AS source_file,
+		'product' AS target_table,
+		COUNT(*) AS records_loaded,
+		'SUCCESS' AS status,
+		CURRENT_TIMESTAMP() AS start_time,
+		CURRENT_TIMESTAMP() AS end_time
+	FROM `{PROJECT_ID}.silver.product`
+	) S
+	ON
+		T.source_file = S.source_file
+		AND T.layer = S.layer
+		AND T.target_table = S.target_table
+	WHEN NOT MATCHED THEN
+	INSERT (
+		pipeline_name,
+		layer,
+		source_file,
+		target_table,
+		records_loaded,
+		status,
+		start_time,
+		end_time
+	)
+
+	VALUES (
+		S.pipeline_name,
+		S.layer,
+		S.source_file,
+		S.target_table,
+		S.records_loaded,
+		S.status,
+		S.start_time,
+		S.end_time
+	)
+	""",
+            "useLegacySql": False,
+        }
+    },
+    location="US",
+    )
+
+    gold_product = BigQueryInsertJobOperator(
+    task_id="gold_product",
+    configuration={
+        "query": {
+            "query": """
+            CREATE OR REPLACE TABLE `etl-demo-project-500808.gold.product` AS
+            SELECT *
+            FROM `etl-demo-project-500808.silver.product`;
+            """,
+            "useLegacySql": False,
+        }
+    },
+    )
+     
+    audit_production_gold = BigQueryInsertJobOperator(
+    task_id="audit_production_gold",
+    configuration={
+        "query": {
+            "query": f"""
+	MERGE `{PROJECT_ID}.audit.pipeline_audit` T
+	USING (
+	SELECT
+		'silver_etl_pipeline_002' AS pipeline_name,
+		'SILVER' AS layer,
+		'PX_CAT_G1V2.csv' AS source_file,
+		'product' AS target_table,
+		COUNT(*) AS records_loaded,
+		'SUCCESS' AS status,
+		CURRENT_TIMESTAMP() AS start_time,
+		CURRENT_TIMESTAMP() AS end_time
+	FROM `{PROJECT_ID}.silver.product`
+	) S
+	ON
+		T.source_file = S.source_file
+		AND T.layer = S.layer
+		AND T.target_table = S.target_table
+	WHEN NOT MATCHED THEN
+	INSERT (
+		pipeline_name,
+		layer,
+		source_file,
+		target_table,
+		records_loaded,
+		status,
+		start_time,
+		end_time
+	)
+
+	VALUES (
+		S.pipeline_name,
+		S.layer,
+		S.source_file,
+		S.target_table,
+		S.records_loaded,
+		S.status,
+		S.start_time,
+		S.end_time
+	)
+	""",
+            "useLegacySql": False,
+        }
+    },
+    location="US",
+    )
+
+    end = EmptyOperator(
+        task_id="end"
+    )
+
     start >> create_customer_silver >> audit_customer
 
     audit_customer >> create_location_silver >> audit_location
 
     audit_location >> create_product_silver >> audit_product
 
-    audit_product >> end
+    audit_product >> gold_customer >> gold_audit_cutomer 
+   
+    gold_audit_customer >> gold_location >> audit_location_gold 
+    
+    audit_location_gold >> gold_product >> audit_production_gold 
+  
+    audit_production_gold >> end
 
     
