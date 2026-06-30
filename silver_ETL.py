@@ -468,9 +468,9 @@ with DAG(
 
     audit_location >> create_product_silver >> audit_product
 
-    audit_product >> gold_customer >> gold_audit_customer 
+    audit_product >> gold_customer >> audit_customer_gold 
    
-    gold_audit_customer >> gold_location >> audit_location_gold 
+    audit_customer_gold >> gold_location >> audit_location_gold 
     
     audit_location_gold >> gold_product >> audit_product_gold 
   
