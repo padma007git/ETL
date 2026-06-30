@@ -652,7 +652,7 @@ with DAG(
         audit_product_gold = BigQueryInsertJobOperator(
 	task_id="audit_product_gold",
 	configuration={
-	    query": {
+	    "query": {
 		"query": f"""
 		MERGE `{PROJECT_ID}.audit.pipeline_audit` T
 		USING (
