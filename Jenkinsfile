@@ -84,7 +84,7 @@ pipeline {
        	    	sh '''
             	gcloud composer environments run ${COMPOSER_ENV} \
         	--location ${REGION} \
-        	dags trigger -- silver_etl_pipeline_002
+        	dags trigger -- silver_etl_pipeline_007
         	'''
    		 }
 	}
@@ -94,7 +94,7 @@ pipeline {
         	sh '''
         	while true
 		do
-    		STATUS=$(gcloud composer environments run etl-composer-02 \
+    		STATUS=$(gcloud composer environments run etl-composer-007 \
         	--location us-central1 dags list-runs -- \
         	--dag-id silver_etl_pipeline_002 | grep -E "success|failed|running|queued" | head -1)
 

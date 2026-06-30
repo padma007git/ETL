@@ -34,7 +34,7 @@ with DAG(
         source_format="CSV",
         skip_leading_rows=1,
         autodetect=True,
-	create_disposition="CREATE_IF_NEEDED",
+        create_disposition="CREATE_IF_NEEDED",
         write_disposition="WRITE_TRUNCATE",
     )
     

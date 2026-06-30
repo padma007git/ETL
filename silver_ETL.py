@@ -11,7 +11,7 @@ default_args = {
 }
 
 with DAG(
-    dag_id="silver_etl_pipeline_002",
+    dag_id="silver_etl_pipeline_007",
     start_date=datetime(2026, 1, 1),
     schedule=None,
     catchup=False,
@@ -411,8 +411,8 @@ with DAG(
     },
     )
      
-    audit_production_gold = BigQueryInsertJobOperator(
-    task_id="audit_production_gold",
+    audit_product_gold = BigQueryInsertJobOperator(
+    task_id="audit_product_gold",
     configuration={
         "query": {
             "query": f"""
@@ -476,8 +476,8 @@ with DAG(
    
     gold_audit_customer >> gold_location >> audit_location_gold 
     
-    audit_location_gold >> gold_product >> audit_production_gold 
+    audit_location_gold >> gold_product >> audit_product_gold 
   
-    audit_production_gold >> end
+    audit_product_gold >> end
 
     
