@@ -261,10 +261,6 @@ with DAG(
     },
     location="US",
 	)
-    
-    end = EmptyOperator(
-        task_id="end"
-    )
 
     gold_customer = BigQueryInsertJobOperator(
     task_id="gold_customer",
