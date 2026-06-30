@@ -286,7 +286,7 @@ with DAG(
 	USING (
 	SELECT
 		'silver_etl_pipeline_002' AS pipeline_name,
-		'SILVER' AS layer,
+		'GOLD' AS layer,
 		'CUST_AZ12.csv' AS source_file,
 		'product' AS target_table,
 		COUNT(*) AS records_loaded,
@@ -351,7 +351,7 @@ with DAG(
 	USING (
 	SELECT
 		'silver_etl_pipeline_002' AS pipeline_name,
-		'SILVER' AS layer,
+		'GOLD' AS layer,
 		'LOC_A101.csv' AS source_file,
 		'location' AS target_table,
 		COUNT(*) AS records_loaded,
@@ -416,7 +416,7 @@ with DAG(
 	USING (
 	SELECT
 		'silver_etl_pipeline_002' AS pipeline_name,
-		'SILVER' AS layer,
+		'GOLD' AS layer,
 		'PX_CAT_G1V2.csv' AS source_file,
 		'product' AS target_table,
 		COUNT(*) AS records_loaded,
