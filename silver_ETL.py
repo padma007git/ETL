@@ -293,7 +293,7 @@ with DAG(
 		'SUCCESS' AS status,
 		CURRENT_TIMESTAMP() AS start_time,
 		CURRENT_TIMESTAMP() AS end_time
-	FROM `{PROJECT_ID}.silver.product`
+	FROM `{PROJECT_ID}.gold.customer`
 	) S
 	ON
 		T.source_file = S.source_file
@@ -353,12 +353,12 @@ with DAG(
 		'silver_etl_pipeline_002' AS pipeline_name,
 		'SILVER' AS layer,
 		'LOC_A101.csv' AS source_file,
-		'product' AS target_table,
+		'location' AS target_table,
 		COUNT(*) AS records_loaded,
 		'SUCCESS' AS status,
 		CURRENT_TIMESTAMP() AS start_time,
 		CURRENT_TIMESTAMP() AS end_time
-	FROM `{PROJECT_ID}.silver.product`
+	FROM `{PROJECT_ID}.gold.location`
 	) S
 	ON
 		T.source_file = S.source_file
@@ -423,7 +423,7 @@ with DAG(
 		'SUCCESS' AS status,
 		CURRENT_TIMESTAMP() AS start_time,
 		CURRENT_TIMESTAMP() AS end_time
-	FROM `{PROJECT_ID}.silver.product`
+	FROM `{PROJECT_ID}.gold.product`
 	) S
 	ON
 		T.source_file = S.source_file
