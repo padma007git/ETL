@@ -62,7 +62,7 @@ pipeline {
         	do
           	STATUS=$(gcloud composer environments run etl-composer-02 \
 		--location us-central1 dags list-runs -- \
-		--dag-id customer_etl_pipeline_007 | grep -E "success|failed|running|queued" | head -1)
+		--dag-id customer_etl_pipeline_123 | grep -E "success|failed|running|queued" | head -1)
 
 		echo "$STATUS"
 
