@@ -288,7 +288,7 @@ with DAG(
 		'silver_etl_pipeline_002' AS pipeline_name,
 		'GOLD' AS layer,
 		'CUST_AZ12.csv' AS source_file,
-		'product' AS target_table,
+		'customer' AS target_table,
 		COUNT(*) AS records_loaded,
 		'SUCCESS' AS status,
 		CURRENT_TIMESTAMP() AS start_time,
